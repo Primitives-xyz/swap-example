@@ -12,14 +12,6 @@ A clean, reusable swap implementation for Solana that separates business logic f
 - 🎣 React hooks for easy integration
 - 🛠️ Utility functions for amount formatting and validation
 
-## Installation
-
-Copy the `swap-sdk` folder to your project and install the required dependencies:
-
-```bash
-npm install @solana/web3.js
-```
-
 ## Basic Usage
 
 ### 1. Simple Swap Implementation
@@ -31,7 +23,7 @@ import {
   SwapMode,
   SOL_MINT,
   USDC_MINT,
-} from './swap-sdk'
+} from "./swap-sdk";
 
 function SwapComponent() {
   const {
@@ -44,7 +36,7 @@ function SwapComponent() {
     setOutputToken,
     handleAmountChange,
     swapTokens,
-  } = useSwapInputs()
+  } = useSwapInputs();
 
   const {
     expectedOutput,
@@ -62,24 +54,24 @@ function SwapComponent() {
     wallet: wallet, // Your wallet adapter
     walletAddress: walletAddress,
     swapMode: swapMode,
-    rpcUrl: 'https://api.mainnet-beta.solana.com',
-    swapApiEndpoint: '/api/jupiter/swap', // Your API endpoint
+    rpcUrl: "https://api.mainnet-beta.solana.com",
+    swapApiEndpoint: "/api/jupiter/swap", // Your API endpoint
     onSuccess: (result) => {
-      console.log('Swap successful:', result.signature)
+      console.log("Swap successful:", result.signature);
     },
     onError: (error) => {
-      console.error('Swap failed:', error)
+      console.error("Swap failed:", error);
     },
-  })
+  });
 
   // Update output amount when quote changes
   useEffect(() => {
     if (swapMode === SwapMode.EXACT_IN && expectedOutput) {
-      setOutputAmount(expectedOutput)
+      setOutputAmount(expectedOutput);
     } else if (swapMode === SwapMode.EXACT_OUT && expectedOutput) {
-      setInputAmount(expectedOutput)
+      setInputAmount(expectedOutput);
     }
-  }, [expectedOutput, swapMode])
+  }, [expectedOutput, swapMode]);
 
   return (
     <div>
@@ -95,7 +87,7 @@ function SwapComponent() {
             /* Open token selector */
           }}
         >
-          {inputToken?.symbol || 'Select Token'}
+          {inputToken?.symbol || "Select Token"}
         </button>
       </div>
 
@@ -114,7 +106,7 @@ function SwapComponent() {
             /* Open token selector */
           }}
         >
-          {outputToken?.symbol || 'Select Token'}
+          {outputToken?.symbol || "Select Token"}
         </button>
       </div>
 
@@ -125,27 +117,27 @@ function SwapComponent() {
 
       {/* Swap Button */}
       <button onClick={handleSwap} disabled={loading || !wallet}>
-        {loading ? 'Swapping...' : 'Swap'}
+        {loading ? "Swapping..." : "Swap"}
       </button>
 
       {/* Error Display */}
       {error && <div>Error: {error}</div>}
     </div>
-  )
+  );
 }
 ```
 
 ### 2. Using Amount by Percentage
 
 ```tsx
-import { useAmountByPercentage } from './swap-sdk'
+import { useAmountByPercentage } from "./swap-sdk";
 
 function QuickAmountButtons({ balance, decimals, onAmountChange }) {
   const { setAmountByPercentage } = useAmountByPercentage({
     balance: balance, // Raw balance in smallest unit
     decimals: decimals,
     onAmountChange: onAmountChange,
-  })
+  });
 
   return (
     <div>
@@ -154,7 +146,7 @@ function QuickAmountButtons({ balance, decimals, onAmountChange }) {
       <button onClick={() => setAmountByPercentage(75)}>75%</button>
       <button onClick={() => setAmountByPercentage(100)}>MAX</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -172,13 +164,13 @@ export async function POST(request: Request) {
     slippageMode,
     slippageBps,
     swapMode,
-  } = await request.json()
+  } = await request.json();
 
   // Get swap transaction from Jupiter
-  const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
-    method: 'POST',
+  const swapResponse = await fetch("https://quote-api.jup.ag/v6/swap", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       quoteResponse,
@@ -188,17 +180,17 @@ export async function POST(request: Request) {
       slippageBps,
       swapMode,
     }),
-  })
+  });
 
-  const swapData = await swapResponse.json()
+  const swapData = await swapResponse.json();
 
   if (swapData.error) {
-    return Response.json({ error: swapData.error }, { status: 400 })
+    return Response.json({ error: swapData.error }, { status: 400 });
   }
 
   return Response.json({
     transaction: swapData.swapTransaction,
-  })
+  });
 }
 ```
 
@@ -221,7 +213,7 @@ const {
   handleSwap, // Execute swap function
   refreshQuote, // Manually refresh quote
   resetState, // Reset all states
-} = useSwap(params)
+} = useSwap(params);
 ```
 
 ### useSwapInputs
@@ -242,7 +234,7 @@ const {
   setSwapMode, // Set swap mode
   swapTokens, // Swap input/output tokens
   handleAmountChange, // Handle amount changes with validation
-} = useSwapInputs(defaultInputToken, defaultOutputToken, defaultAmount)
+} = useSwapInputs(defaultInputToken, defaultOutputToken, defaultAmount);
 ```
 
 ### useAmountByPercentage
@@ -253,7 +245,7 @@ Calculate token amounts by percentage of balance.
 const {
   setAmountByPercentage, // Set amount by percentage
   getAmountByPercentage, // Get amount for percentage
-} = useAmountByPercentage({ balance, decimals, onAmountChange })
+} = useAmountByPercentage({ balance, decimals, onAmountChange });
 ```
 
 ## Utility Functions
@@ -261,30 +253,30 @@ const {
 ### Amount Formatting
 
 ```typescript
-import { formatAmount, toSmallestUnit, fromSmallestUnit } from './swap-sdk'
+import { formatAmount, toSmallestUnit, fromSmallestUnit } from "./swap-sdk";
 
 // Format amount with proper decimals
-const formatted = formatAmount('1.234567', 4) // "1.2345"
+const formatted = formatAmount("1.234567", 4); // "1.2345"
 
 // Convert to smallest unit (e.g., lamports)
-const lamports = toSmallestUnit('1.5', 9) // 1500000000n
+const lamports = toSmallestUnit("1.5", 9); // 1500000000n
 
 // Convert from smallest unit
-const amount = fromSmallestUnit('1500000000', 9) // "1.5"
+const amount = fromSmallestUnit("1500000000", 9); // "1.5"
 ```
 
 ### Validation
 
 ```typescript
-import { validateAmount, isValidAmountInput } from './swap-sdk'
+import { validateAmount, isValidAmountInput } from "./swap-sdk";
 
 // Validate amount with decimals
-const isValid = validateAmount('1.234', 3) // true
-const isInvalid = validateAmount('1.2345', 3) // false (too many decimals)
+const isValid = validateAmount("1.234", 3); // true
+const isInvalid = validateAmount("1.2345", 3); // false (too many decimals)
 
 // Check if input is valid for amount field
-const canType = isValidAmountInput('1.23') // true
-const cantType = isValidAmountInput('abc') // false
+const canType = isValidAmountInput("1.23"); // true
+const cantType = isValidAmountInput("abc"); // false
 ```
 
 ## Constants
@@ -298,7 +290,7 @@ import {
   PLATFORM_FEE_BPS, // Platform fee (80 = 0.8%)
   PLATFORM_FEE_ACCOUNT, // Platform fee account
   QUOTE_REFRESH_INTERVAL, // Quote refresh interval (15000ms)
-} from './swap-sdk'
+} from "./swap-sdk";
 ```
 
 ## TypeScript Types
@@ -310,7 +302,7 @@ import type {
   SwapState, // Complete swap state
   SwapResult, // Swap transaction result
   WalletInterface, // Generic wallet interface
-} from './swap-sdk'
+} from "./swap-sdk";
 ```
 
 ## Best Practices
